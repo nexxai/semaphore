@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TaskUpdated;
 use App\Http\Requests\TaskRequest;
 use App\Mail\FirstTaskAddedToDay;
 use App\Models\Day;
@@ -29,6 +30,9 @@ class TaskController extends Controller
             Mail::to(config('tasklist.admin_email'))
                 ->queue(new FirstTaskAddedToDay($day, $task));
         }
+
+        // Broadcast task update
+        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
     }
 
     public function remove(TaskRequest $request)
@@ -40,6 +44,9 @@ class TaskController extends Controller
         if ($day->tasks()->where('task_id', $taskId)->exists()) {
             $day->tasks()->detach($taskId);
         }
+
+        // Broadcast task update
+        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
     }
 
     public function create(Request $request)
@@ -50,6 +57,8 @@ class TaskController extends Controller
             'name' => $request->input('name'),
             'description' => $request->input('description', null),
         ]);
+
+        broadcast(new TaskUpdated(Day::getCurrentDay(), auth()->user()))->toOthers();
     }
 
     public function complete(TaskRequest $request)
@@ -61,6 +70,9 @@ class TaskController extends Controller
         if ($day->tasks()->where('task_id', $taskId)->exists()) {
             $day->tasks()->updateExistingPivot($taskId, ['completed' => true]);
         }
+
+        // Broadcast task update
+        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
     }
 
     public function notcomplete(TaskRequest $request)
@@ -72,6 +84,9 @@ class TaskController extends Controller
         if ($day->tasks()->where('task_id', $taskId)->exists()) {
             $day->tasks()->updateExistingPivot($taskId, ['completed' => false]);
         }
+
+        // Broadcast task update
+        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
     }
 
     public function updateDescription(Request $request)
@@ -85,5 +100,8 @@ class TaskController extends Controller
         $task = $day->tasks()->where('task_id', $request->input('taskId'))->withPivot('description')->first();
         $task->pivot->description = $request->input('description');
         $task->pivot->save();
+
+        // Broadcast task update
+        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
     }
 }

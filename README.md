@@ -58,13 +58,19 @@ php artisan migrate
 npm run build
 ```
 
-### 7. Start the development server
+### 7. Start the development server and required services
 
 ```bash
-php artisan serve
+# Start the Laravel server, queue worker, and Vite development server
+composer dev
+
+# In a separate terminal, start the Reverb WebSocket server
+php artisan reverb:start
 ```
 
 The application will be available at `http://localhost:8000`.
+
+**Note:** Both the queue worker and Reverb server need to be running for the application to function properly. The queue worker processes email notifications, and Reverb enables real-time updates in the UI.
 
 ## Security Considerations
 

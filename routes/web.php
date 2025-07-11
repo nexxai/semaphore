@@ -3,16 +3,19 @@
 use App\Http\Controllers\TaskController;
 use App\Models\Day;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    $day = Day::getCurrentDay();
-    $available_tasks = Task::all()->diff($day->tasks);
+    if (! auth()->check()) {
+        $user = User::factory()->create();
+        auth()->login($user);
+    }
 
     return Inertia::render('welcome', [
-        'tasks' => $available_tasks,
-        'current_day' => $day,
+        'tasks' => fn () => Task::all()->diff(Day::getCurrentDay()->tasks),
+        'current_day' => fn () => Day::getCurrentDay(),
     ]);
 })->name('home');
 
