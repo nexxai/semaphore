@@ -1,10 +1,8 @@
-import { Badge } from '@/components/ui/badge';
 import { type Task } from '@/types';
 import { router, useForm } from '@inertiajs/react';
-import { CheckSquareIcon, NotebookPenIcon, PencilIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 
 export default function ActiveTask({ task }: { task: Task }) {
@@ -39,37 +37,44 @@ export default function ActiveTask({ task }: { task: Task }) {
         router.post('/tasks/notcomplete', { taskId });
     };
 
+    const toggleTaskCompleted = (taskId: number) => {
+        if (task.pivot && task.pivot.completed) {
+            markAsNotCompleted(taskId);
+        } else {
+            markAsCompleted(taskId);
+        }
+    };
+
     return (
-        <div className="mb-2">
-            <p>
-                <Badge
-                    className={twMerge(
-                        'mr-2 transition hover:scale-105 hover:cursor-pointer',
-                        task.pivot && task.pivot.completed ? 'line-through' : '',
-                    )}
-                    size="lg"
-                    onClick={() => (task.pivot && !task.pivot.completed ? removeTask(task.id) : markAsNotCompleted(task.id))}
-                >
-                    {task.pivot && !task.pivot.completed && <XIcon />}
-                    {task.name}
-                </Badge>
-                {task.pivot && !task.pivot.completed && (
-                    <Badge variant="outline" className="hover:scale-105 hover:cursor-pointer" onClick={() => markAsCompleted(task.id)}>
-                        <CheckSquareIcon /> Mark as completed
-                    </Badge>
+        <div className="mb-4">
+            <div
+                onClick={() => toggleTaskCompleted(task.id)}
+                className={twMerge(
+                    'flex h-9 items-center rounded-md border border-input bg-transparent px-3 py-1 text-primary shadow-xs transition-all outline-none hover:cursor-pointer md:text-sm',
+                    task.pivot && task.pivot.completed ? 'text-gray-500 line-through dark:text-gray-400' : '',
                 )}
-            </p>
-            <div className="mt-1 flex items-center">
-                <Button size="xs" variant="secondary" className="mr-2 text-sm hover:cursor-pointer" onClick={() => toggleShowAddDescription()}>
-                    {task.pivot && task.pivot.description ? <PencilIcon /> : <NotebookPenIcon />}
-                </Button>
-                {!showAddDescription && task.pivot && task.pivot.description && (
+            >
+                <Checkbox
+                    checked={task.pivot && task.pivot.completed}
+                    onCheckedChange={() => (task.pivot && !task.pivot.completed ? markAsCompleted(task.id) : markAsNotCompleted(task.id))}
+                    className="mr-2"
+                />
+                {task.name}
+            </div>
+            <div className="mt-2 flex items-baseline text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <div>Notes</div>
+                <button className="ml-1 text-xs font-medium hover:cursor-pointer" onClick={() => toggleShowAddDescription()}>
+                    ({task.pivot && task.pivot.description ? 'Edit' : 'Add'})
+                </button>
+            </div>
+            <div className="mt-1 flex w-full items-center">
+                {!showAddDescription && task.pivot && (
                     <p className="text-sm text-gray-500 dark:text-gray-400" onClick={() => setShowAddDescription(true)}>
-                        {task.pivot.description}
+                        {task.pivot.description ? task.pivot.description : 'No notes'}
                     </p>
                 )}
                 {showAddDescription && (
-                    <div>
+                    <div className="w-full">
                         <Input
                             type="text"
                             className="w-full p-2"

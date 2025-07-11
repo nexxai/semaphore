@@ -58,12 +58,13 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                             <h2 className="text-xl leading-tight font-semibold tracking-tight text-[#1b1b18] lg:text-2xl dark:text-[#EDEDEC]">
                                 Available tasks
                             </h2>
-                            <div className="w-full text-base text-[#1b1b18] sm:w-1/2 lg:w-2/3 dark:text-[#EDEDEC]">
+                            <div className="w-full space-y-1 text-base text-[#1b1b18] sm:w-1/2 lg:w-2/3 dark:text-[#EDEDEC]">
                                 {tasks &&
                                     tasks.length > 0 &&
                                     tasks.map((task) => (
                                         <Badge
                                             variant="secondary"
+                                            size="lg"
                                             className="mr-2 transition hover:scale-105 hover:cursor-pointer"
                                             key={task.id}
                                             onClick={() => addTask(task.id)}
@@ -94,6 +95,7 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                                 ) : (
                                     <Badge
                                         variant="secondary"
+                                        size="lg"
                                         className="mr-2 transition hover:scale-105 hover:cursor-pointer"
                                         onClick={() => toggleShowNewTaskInput()}
                                     >
