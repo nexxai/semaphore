@@ -1,25 +1,29 @@
 import { Badge } from '@/components/ui/badge';
 import { type Task } from '@/types';
-import { router } from '@inertiajs/react';
-import { useDebounce } from '@uidotdev/usehooks';
+import { router, useForm } from '@inertiajs/react';
 import { CheckSquareIcon, MinusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Input } from './ui/input';
 
 export default function ActiveTask({ task }: { task: Task }) {
-    const [description, setDescription] = useState<string>(task.pivot?.description || '');
     const [showAddDescription, setShowAddDescription] = useState<boolean>(false);
-    const debouncedDescription = useDebounce(description, 500);
 
-    useEffect(() => {
-        if (task.pivot && task.pivot.description !== debouncedDescription) {
-            router.post('/tasks/update-description', {
-                taskId: task.id,
-                description: debouncedDescription,
-            });
-        }
-    }, [debouncedDescription, task.pivot, task.id]);
+    const { data, setData, post, processing, errors } = useForm({
+        taskId: task.id,
+        description: task.pivot?.description || '',
+    });
+
+    const updateDescription = () => {
+        post(route('tasks.update-description'), {
+            onSuccess: () => {
+                setShowAddDescription(false);
+            },
+            onError: (errors) => {
+                console.error(errors);
+            },
+        });
+    };
 
     const toggleShowAddDescription = () => {
         setShowAddDescription(!showAddDescription);
@@ -66,11 +70,12 @@ export default function ActiveTask({ task }: { task: Task }) {
                     <Input
                         type="text"
                         className="mb-4 w-full p-2"
-                        value={description}
+                        value={data.description}
                         autoFocus
                         placeholder="e.g. Make sure to get under the bed"
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
+                                updateDescription();
                                 setShowAddDescription(false);
                             }
                             if (e.key === 'Escape') {
@@ -78,7 +83,7 @@ export default function ActiveTask({ task }: { task: Task }) {
                             }
                         }}
                         onChange={(e) => {
-                            setDescription(e.target.value);
+                            setData('description', e.target.value);
                         }}
                     />
                 </p>
