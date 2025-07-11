@@ -79,9 +79,9 @@ If you plan to host Semaphore outside of a walled garden network (such as a priv
 
 Failure to secure your application could result in unauthorized access to your family's task data and potential misuse of the application.
 
-## Email Configuration with AWS SES
+## Email Configuration
 
-Semaphore uses AWS Simple Email Service (SES) for sending emails. Follow these steps to set up email sending:
+Semaphore recommends using AWS Simple Email Service (SES) for sending emails. Follow these steps to set up email sending:
 
 ### 1. Create an AWS Account
 
