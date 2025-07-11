@@ -31,7 +31,7 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
             </Head>
             <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
                 <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
-                    <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
+                    <main className="flex w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
                         <div className="flex w-full flex-col items-center justify-center gap-6 px-6 py-8 lg:w-4/5 lg:items-start lg:px-12 lg:py-16">
                             <h1 className="text-3xl leading-tight font-bold tracking-tight text-[#1b1b18] lg:text-4xl dark:text-[#EDEDEC]">
                                 Tasklist
@@ -56,7 +56,7 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                             <h2 className="text-xl leading-tight font-semibold tracking-tight text-[#1b1b18] lg:text-2xl dark:text-[#EDEDEC]">
                                 Available tasks
                             </h2>
-                            <div className="text-base text-[#1b1b18] dark:text-[#EDEDEC]">
+                            <div className="w-2/3 text-base text-[#1b1b18] dark:text-[#EDEDEC]">
                                 {tasks &&
                                     tasks.length > 0 &&
                                     tasks.map((task) => (
