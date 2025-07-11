@@ -1,9 +1,10 @@
 import { Badge } from '@/components/ui/badge';
 import { type Task } from '@/types';
 import { router, useForm } from '@inertiajs/react';
-import { CheckSquareIcon, MinusIcon } from 'lucide-react';
+import { CheckSquareIcon, NotebookPenIcon, PencilIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Button } from './ui/button';
 import { Input } from './ui/input';
 
 export default function ActiveTask({ task }: { task: Task }) {
@@ -42,52 +43,55 @@ export default function ActiveTask({ task }: { task: Task }) {
         <div className="mb-2">
             <p>
                 <Badge
-                    variant="secondary"
                     className={twMerge(
                         'mr-2 transition hover:scale-105 hover:cursor-pointer',
                         task.pivot && task.pivot.completed ? 'line-through' : '',
                     )}
+                    size="lg"
                     onClick={() => (task.pivot && !task.pivot.completed ? removeTask(task.id) : markAsNotCompleted(task.id))}
                 >
-                    {task.pivot && !task.pivot.completed && <MinusIcon />}
+                    {task.pivot && !task.pivot.completed && <XIcon />}
                     {task.name}
                 </Badge>
                 {task.pivot && !task.pivot.completed && (
                     <Badge variant="outline" className="hover:scale-105 hover:cursor-pointer" onClick={() => markAsCompleted(task.id)}>
-                        <CheckSquareIcon />
+                        <CheckSquareIcon /> Mark as completed
                     </Badge>
                 )}
-
-                <span className="text-sm hover:cursor-pointer" onClick={() => toggleShowAddDescription()}>
-                    Add notes
-                </span>
             </p>
-            {showAddDescription && (
-                <p className="mt-2">
-                    <Input
-                        type="text"
-                        className="mb-4 w-full p-2"
-                        value={data.description}
-                        autoFocus
-                        placeholder="e.g. Make sure to get under the bed"
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                updateDescription();
-                            }
-                            if (e.key === 'Escape') {
-                                setShowAddDescription(false);
-                            }
-                        }}
-                        onChange={(e) => {
-                            setData('description', e.target.value);
-                        }}
-                    />
-                    {errors.description && <p className="mb-2 text-sm text-red-500">{errors.description}</p>}
-                </p>
-            )}
-            {!showAddDescription && task.pivot && task.pivot.description && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">{task.pivot.description}</p>
-            )}
+            <div className="mt-1 flex items-center">
+                <Button size="xs" variant="secondary" className="mr-2 text-sm hover:cursor-pointer" onClick={() => toggleShowAddDescription()}>
+                    {task.pivot && task.pivot.description ? <PencilIcon /> : <NotebookPenIcon />}
+                </Button>
+                {!showAddDescription && task.pivot && task.pivot.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400" onClick={() => setShowAddDescription(true)}>
+                        {task.pivot.description}
+                    </p>
+                )}
+                {showAddDescription && (
+                    <div>
+                        <Input
+                            type="text"
+                            className="w-full p-2"
+                            value={data.description}
+                            autoFocus
+                            placeholder="e.g. Make sure to get under the bed"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    updateDescription();
+                                }
+                                if (e.key === 'Escape') {
+                                    setShowAddDescription(false);
+                                }
+                            }}
+                            onChange={(e) => {
+                                setData('description', e.target.value);
+                            }}
+                        />
+                        {errors.description && <p className="mb-2 text-sm text-red-500">{errors.description}</p>}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
