@@ -19,7 +19,7 @@ export default function ActiveTask({ task }: { task: Task }) {
                 description: debouncedDescription,
             });
         }
-    }, [debouncedDescription]);
+    }, [debouncedDescription, task.pivot, task.id]);
 
     const toggleShowAddDescription = () => {
         setShowAddDescription(!showAddDescription);
