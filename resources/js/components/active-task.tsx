@@ -71,11 +71,6 @@ export default function ActiveTask({ task }: { task: Task }) {
                         placeholder="e.g. Make sure to get under the bed"
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                                router.post('/tasks/update-description', {
-                                    taskId: task.id,
-                                    description: description,
-                                });
-
                                 setShowAddDescription(false);
                             }
                             if (e.key === 'Escape') {

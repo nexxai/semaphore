@@ -41,7 +41,7 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                                 To-do
                             </h2>
 
-                            <div className="w-2/3 text-base text-[#1b1b18] dark:text-[#EDEDEC]">
+                            <div className="w-full text-base text-[#1b1b18] sm:w-1/2 lg:w-2/3 dark:text-[#EDEDEC]">
                                 {current_day.tasks && current_day.tasks.length > 0 && (
                                     <ul className="space-y-1">
                                         {current_day.tasks.map((task) => (
@@ -56,7 +56,7 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                             <h2 className="text-xl leading-tight font-semibold tracking-tight text-[#1b1b18] lg:text-2xl dark:text-[#EDEDEC]">
                                 Available tasks
                             </h2>
-                            <div className="w-2/3 text-base text-[#1b1b18] dark:text-[#EDEDEC]">
+                            <div className="w-full text-base text-[#1b1b18] sm:w-1/2 lg:w-2/3 dark:text-[#EDEDEC]">
                                 {tasks &&
                                     tasks.length > 0 &&
                                     tasks.map((task) => (
