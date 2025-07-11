@@ -25,10 +25,6 @@ export default function ActiveTask({ task }: { task: Task }) {
         setShowAddDescription(!showAddDescription);
     };
 
-    const removeTask = (taskId: number) => {
-        router.post('/tasks/remove', { taskId });
-    };
-
     const markAsCompleted = (taskId: number) => {
         router.post('/tasks/complete', { taskId });
     };
