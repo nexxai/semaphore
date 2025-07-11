@@ -9,7 +9,7 @@ import { Input } from './ui/input';
 export default function ActiveTask({ task }: { task: Task }) {
     const [showAddDescription, setShowAddDescription] = useState<boolean>(false);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, errors } = useForm({
         taskId: task.id,
         description: task.pivot?.description || '',
     });
@@ -18,9 +18,6 @@ export default function ActiveTask({ task }: { task: Task }) {
         post(route('tasks.update-description'), {
             onSuccess: () => {
                 setShowAddDescription(false);
-            },
-            onError: (errors) => {
-                console.error(errors);
             },
         });
     };
@@ -76,7 +73,6 @@ export default function ActiveTask({ task }: { task: Task }) {
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 updateDescription();
-                                setShowAddDescription(false);
                             }
                             if (e.key === 'Escape') {
                                 setShowAddDescription(false);
@@ -86,6 +82,7 @@ export default function ActiveTask({ task }: { task: Task }) {
                             setData('description', e.target.value);
                         }}
                     />
+                    {errors.description && <p className="mb-2 text-sm text-red-500">{errors.description}</p>}
                 </p>
             )}
             {!showAddDescription && task.pivot && task.pivot.description && (

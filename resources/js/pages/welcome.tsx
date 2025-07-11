@@ -42,7 +42,7 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                             </h2>
 
                             <div className="w-full text-base text-[#1b1b18] sm:w-1/2 lg:w-2/3 dark:text-[#EDEDEC]">
-                                {current_day.tasks && current_day.tasks.length > 0 && (
+                                {current_day.tasks && current_day.tasks.length > 0 ? (
                                     <ul className="space-y-1">
                                         {current_day.tasks.map((task) => (
                                             <li key={task.id}>
@@ -50,6 +50,8 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                                             </li>
                                         ))}
                                     </ul>
+                                ) : (
+                                    <p className="text-gray-500">No uncompleted tasks!</p>
                                 )}
                             </div>
 
