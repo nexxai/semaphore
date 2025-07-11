@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
+use App\Mail\FirstTaskAddedToDay;
 use App\Models\Day;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TaskController extends Controller
 {
@@ -19,6 +21,13 @@ class TaskController extends Controller
             $task = Task::find($taskId);
 
             $day->tasks()->attach($task, ['completed' => false]);
+        }
+
+        // Check if this is the first task added to the day
+        if ($day->tasks()->count() === 1) {
+            // Send an email notification
+            Mail::to(config('tasklist.admin_email'))
+                ->queue(new FirstTaskAddedToDay($day, $task));
         }
     }
 

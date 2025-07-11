@@ -23,11 +23,9 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
         router.post('/tasks/add', { taskId });
     };
 
-    console.log(current_day);
-
     return (
         <>
-            <Head title="Welcome">
+            <Head>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
             </Head>
