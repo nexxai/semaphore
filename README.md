@@ -44,7 +44,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Edit the `.env` file to configure your database and other settings.
+Edit the `.env` file to configure your database and other settings, ensuring you configure an `ADMIN_EMAIL` which is who will receive notifications for added tasks
 
 ### 5. Run database migrations
 
@@ -119,10 +119,12 @@ AWS_DEFAULT_REGION=your-aws-region (e.g., us-east-1)
 ### 5. Moving out of the SES Sandbox
 
 By default, new AWS accounts have SES in sandbox mode, which restricts you to:
+
 - Only sending to verified email addresses
 - A limited number of emails per day
 
 To move out of the sandbox:
+
 1. Go to the SES console
 2. Click on "Account dashboard"
 3. Under "Production access", click "Request production access"
