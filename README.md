@@ -21,7 +21,7 @@ Whether you're coordinating chores, managing family schedules, planning events, 
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/nexxai/semaphore
 cd semaphore
 ```
 
