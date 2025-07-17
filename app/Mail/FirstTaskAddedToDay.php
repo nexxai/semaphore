@@ -29,7 +29,7 @@ class FirstTaskAddedToDay extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '[TASKLIST] First Task Added To Day',
+            subject: '[TASKLIST] First Task Added To List - '.$this->day->date->format('Y-m-d H:i:s'),
         );
     }
 
