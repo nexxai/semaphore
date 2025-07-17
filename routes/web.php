@@ -4,13 +4,14 @@ use App\Http\Controllers\TaskController;
 use App\Models\Day;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    if (! auth()->check()) {
+    if (! Auth::check()) {
         $user = User::factory()->create();
-        auth()->login($user);
+        Auth::login($user);
     }
 
     return Inertia::render('welcome', [

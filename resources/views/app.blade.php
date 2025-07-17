@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="oklch(1 0 0 )" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="oklch(0.145 0 0)" media="(prefers-color-scheme: dark)" />
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
