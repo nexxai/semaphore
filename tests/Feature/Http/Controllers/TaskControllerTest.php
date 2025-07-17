@@ -16,6 +16,7 @@ beforeEach(function () {
 
     $this->day = Day::factory()->create();
     $this->task = Task::factory()->create();
+    $this->task->days()->attach($this->day);
 });
 
 it('will send an email if the task is the first one being added to this day', function () {
@@ -24,8 +25,9 @@ it('will send an email if the task is the first one being added to this day', fu
         'taskId' => $this->task->id,
     ])->assertOk();
 
+    Mail::assertQueuedCount(1);
     Mail::assertQueued(FirstTaskAddedToDay::class, function (FirstTaskAddedToDay $mail) {
-        return $mail->hasSubject('[TASKLIST] First Task Added To Day') &&
+        return $mail->hasSubject('[TASKLIST] First Task Added To List - '.$this->day->date->format('Y-m-d H:i:s')) &&
             $mail->hasTo(config('tasklist.admin_email'));
     });
 });

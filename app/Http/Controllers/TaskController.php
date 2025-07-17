@@ -8,19 +8,19 @@ use App\Mail\FirstTaskAddedToDay;
 use App\Models\Day;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class TaskController extends Controller
 {
     public function add(TaskRequest $request)
     {
+        $taskId = $request->input('taskId');
+        $task = Task::find($taskId);
+
         $day = Day::getCurrentDay();
 
-        $taskId = $request->input('taskId');
-
         if (! $day->tasks()->where('task_id', $taskId)->exists()) {
-            $task = Task::find($taskId);
-
             $day->tasks()->attach($task, ['completed' => false]);
         }
 
@@ -32,7 +32,7 @@ class TaskController extends Controller
         }
 
         // Broadcast task update
-        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
+        broadcast(new TaskUpdated($day, Auth::user()))->toOthers();
     }
 
     public function remove(TaskRequest $request)
@@ -46,7 +46,7 @@ class TaskController extends Controller
         }
 
         // Broadcast task update
-        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
+        broadcast(new TaskUpdated($day, Auth::user()))->toOthers();
     }
 
     public function create(Request $request)
@@ -58,7 +58,7 @@ class TaskController extends Controller
             'description' => $request->input('description', null),
         ]);
 
-        broadcast(new TaskUpdated(Day::getCurrentDay(), auth()->user()))->toOthers();
+        broadcast(new TaskUpdated(Day::getCurrentDay(), Auth::user()))->toOthers();
     }
 
     public function complete(TaskRequest $request)
@@ -72,7 +72,7 @@ class TaskController extends Controller
         }
 
         // Broadcast task update
-        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
+        broadcast(new TaskUpdated($day, Auth::user()))->toOthers();
     }
 
     public function notcomplete(TaskRequest $request)
@@ -86,7 +86,7 @@ class TaskController extends Controller
         }
 
         // Broadcast task update
-        broadcast(new TaskUpdated($day, auth()->user()))->toOthers();
+        broadcast(new TaskUpdated($day, Auth::user()))->toOthers();
     }
 
     public function updateDescription(Request $request)
