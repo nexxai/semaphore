@@ -1,4 +1,4 @@
-import { type Task } from '@/types';
+import { Subtask, type Task } from '@/types';
 import { router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -32,14 +32,6 @@ export default function ActiveTask({ task }: { task: Task }) {
 
     const markAsNotCompleted = (taskId: number) => {
         router.post('/tasks/notcomplete', { taskId });
-    };
-
-    const toggleTaskCompleted = (taskId: number) => {
-        if (task.pivot && task.pivot.completed) {
-            markAsNotCompleted(taskId);
-        } else {
-            markAsCompleted(taskId);
-        }
     };
 
     const toggleSubtaskCompleted = (subtask: Subtask) => {

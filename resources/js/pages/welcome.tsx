@@ -1,8 +1,8 @@
 import ActiveTask from '@/components/active-task';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { type SharedData, type Subtask, type Task } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { type Subtask, type Task } from '@/types';
+import { Head, router } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -15,23 +15,10 @@ interface DayTask {
     subtasks: Subtask[];
 }
 
-interface Day {
-    id: number;
-    date: string;
-    tasks?: Task[];
-    dayTasks?: DayTask[];
-}
-
-interface TaskUpdatedEvent {
-    updated_by: number;
-    day: Day;
-}
-
-export default function Welcome({ tasks, current_day, dayTasks }: { tasks?: Task[]; current_day: Day; dayTasks?: DayTask[] }) {
+export default function Welcome({ tasks, dayTasks }: { tasks?: Task[]; dayTasks?: DayTask[] }) {
     const [showNewTask, setShowNewTask] = useState<boolean>(false);
-    const { auth } = usePage<SharedData>().props;
 
-    useEcho('day', 'TaskUpdated', (e: TaskUpdatedEvent) => {
+    useEcho('day', 'TaskUpdated', () => {
         router.reload();
     });
 
