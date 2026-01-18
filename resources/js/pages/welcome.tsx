@@ -1,16 +1,25 @@
 import ActiveTask from '@/components/active-task';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { type SharedData, type Task } from '@/types';
+import { type SharedData, type Subtask, type Task } from '@/types';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
+interface DayTask {
+    id: number;
+    task_id: number;
+    completed: boolean;
+    task: Task;
+    subtasks: Subtask[];
+}
+
 interface Day {
     id: number;
-    name: string;
+    date: string;
     tasks?: Task[];
+    dayTasks?: DayTask[];
 }
 
 interface TaskUpdatedEvent {
@@ -18,14 +27,12 @@ interface TaskUpdatedEvent {
     day: Day;
 }
 
-export default function Welcome({ tasks, current_day }: { tasks?: Task[]; current_day: Day }) {
+export default function Welcome({ tasks, current_day, dayTasks }: { tasks?: Task[]; current_day: Day; dayTasks?: DayTask[] }) {
     const [showNewTask, setShowNewTask] = useState<boolean>(false);
     const { auth } = usePage<SharedData>().props;
 
     useEcho('day', 'TaskUpdated', (e: TaskUpdatedEvent) => {
-        if (e.updated_by !== auth.user.id) {
-            router.reload();
-        }
+        router.reload();
     });
 
     const toggleShowNewTaskInput = () => {
@@ -53,11 +60,16 @@ export default function Welcome({ tasks, current_day }: { tasks?: Task[]; curren
                             <h2 className="text-3xl leading-tight font-semibold tracking-tight text-[#1b1b18] dark:text-[#EDEDEC]">To-do</h2>
 
                             <div className="w-full text-lg text-[#1b1b18] sm:w-1/2 lg:w-2/3 dark:text-[#EDEDEC]">
-                                {current_day.tasks && current_day.tasks.length > 0 ? (
+                                {dayTasks && dayTasks.length > 0 ? (
                                     <ul className="space-y-1">
-                                        {current_day.tasks.map((task) => (
-                                            <li key={task.id}>
-                                                <ActiveTask task={task} />
+                                        {dayTasks.map((dayTask) => (
+                                            <li key={dayTask.id}>
+                                                <ActiveTask
+                                                    task={{
+                                                        ...dayTask.task,
+                                                        pivot: { id: dayTask.id, completed: dayTask.completed, subtasks: dayTask.subtasks },
+                                                    }}
+                                                />
                                             </li>
                                         ))}
                                     </ul>

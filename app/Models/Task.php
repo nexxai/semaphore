@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Spatie\Tags\HasTags;
 
@@ -29,9 +30,14 @@ class Task extends Model
         'updated_at',
     ];
 
+    public function dayTasks(): HasMany
+    {
+        return $this->hasMany(DayTask::class);
+    }
+
     public function days(): BelongsToMany
     {
-        return $this->belongsToMany(Day::class);
+        return $this->belongsToMany(Day::class, 'day_task');
     }
 
     /**

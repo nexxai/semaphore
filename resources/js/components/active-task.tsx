@@ -6,23 +6,24 @@ import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 
 export default function ActiveTask({ task }: { task: Task }) {
-    const [showAddDescription, setShowAddDescription] = useState<boolean>(false);
+    const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
 
     const { data, setData, post, errors } = useForm({
-        taskId: task.id,
-        description: task.pivot?.description || '',
+        dayTaskId: task.pivot?.id,
+        name: '',
     });
 
-    const updateDescription = () => {
-        post(route('tasks.update-description'), {
+    const addSubtask = () => {
+        post(route('tasks.subtasks.add'), {
             onSuccess: () => {
-                setShowAddDescription(false);
+                setData('name', '');
+                setShowAddSubtask(false);
             },
         });
     };
 
-    const toggleShowAddDescription = () => {
-        setShowAddDescription(!showAddDescription);
+    const toggleShowAddSubtask = () => {
+        setShowAddSubtask(!showAddSubtask);
     };
 
     const markAsCompleted = (taskId: number) => {
@@ -41,12 +42,23 @@ export default function ActiveTask({ task }: { task: Task }) {
         }
     };
 
+    const toggleSubtaskCompleted = (subtask: Subtask) => {
+        if (subtask.completed) {
+            router.post('/tasks/subtasks/notcomplete', { subtaskId: subtask.id });
+        } else {
+            router.post('/tasks/subtasks/complete', { subtaskId: subtask.id });
+        }
+    };
+
+    const removeSubtask = (subtaskId: number) => {
+        router.post('/tasks/subtasks/remove', { subtaskId });
+    };
+
     return (
         <div className="mb-4">
             <div
-                onClick={() => toggleTaskCompleted(task.id)}
                 className={twMerge(
-                    'flex h-9 items-center rounded-md border border-input bg-transparent px-3 py-1 text-primary shadow-xs transition-all outline-none hover:cursor-pointer md:text-sm',
+                    'flex h-9 items-center rounded-md border border-input bg-transparent px-3 py-1 text-primary shadow-xs transition-all outline-none md:text-sm',
                     task.pivot && task.pivot.completed ? 'text-gray-500 line-through dark:text-gray-400' : '',
                 )}
             >
@@ -57,42 +69,56 @@ export default function ActiveTask({ task }: { task: Task }) {
                 />
                 {task.name}
             </div>
-            <div className="mt-2 flex items-baseline text-sm font-semibold text-gray-700 dark:text-gray-300">
-                <div>Notes</div>
-                <button className="ml-1 text-xs font-medium hover:cursor-pointer" onClick={() => toggleShowAddDescription()}>
-                    ({task.pivot && task.pivot.description ? 'Edit' : 'Add'})
+
+            {/* Subtasks */}
+            <div className="mt-2 ml-6 space-y-1">
+                {task.pivot?.subtasks && task.pivot.subtasks.length > 0 ? (
+                    task.pivot.subtasks.map((subtask) => (
+                        <div key={subtask.id} className="flex items-center">
+                            <Checkbox checked={subtask.completed} onCheckedChange={() => toggleSubtaskCompleted(subtask)} className="mr-2" />
+                            <span className={twMerge('text-sm', subtask.completed ? 'text-gray-500 line-through dark:text-gray-400' : '')}>
+                                {subtask.name}
+                            </span>
+                            <button onClick={() => removeSubtask(subtask.id)} className="ml-2 text-xs text-red-500 hover:text-red-700">
+                                ×
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">No subtasks</p>
+                )}
+            </div>
+
+            {/* Add subtask */}
+            <div className="mt-2 ml-6 flex items-baseline text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <button className="hover:cursor-pointer" onClick={toggleShowAddSubtask}>
+                    + Add Subtask
                 </button>
             </div>
-            <div className="mt-1 flex w-full items-center">
-                {!showAddDescription && task.pivot && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400" onClick={() => setShowAddDescription(true)}>
-                        {task.pivot.description ? task.pivot.description : 'No notes'}
-                    </p>
-                )}
-                {showAddDescription && (
-                    <div className="w-full">
-                        <Input
-                            type="text"
-                            className="w-full p-2"
-                            value={data.description}
-                            autoFocus
-                            placeholder="e.g. Make sure to get under the bed"
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    updateDescription();
-                                }
-                                if (e.key === 'Escape') {
-                                    setShowAddDescription(false);
-                                }
-                            }}
-                            onChange={(e) => {
-                                setData('description', e.target.value);
-                            }}
-                        />
-                        {errors.description && <p className="mb-2 text-sm text-red-500">{errors.description}</p>}
-                    </div>
-                )}
-            </div>
+            {showAddSubtask && (
+                <div className="mt-1 ml-6 w-full">
+                    <Input
+                        type="text"
+                        className="w-full p-2"
+                        value={data.name}
+                        autoFocus
+                        placeholder="Subtask name..."
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                addSubtask();
+                            }
+                            if (e.key === 'Escape') {
+                                setShowAddSubtask(false);
+                                setData('name', '');
+                            }
+                        }}
+                        onChange={(e) => {
+                            setData('name', e.target.value);
+                        }}
+                    />
+                    {errors.name && <p className="mb-2 text-sm text-red-500">{errors.name}</p>}
+                </div>
+            )}
         </div>
     );
 }

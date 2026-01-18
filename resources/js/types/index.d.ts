@@ -5,13 +5,21 @@ export interface Auth {
     user: User;
 }
 
+export interface Subtask {
+    id: number;
+    name: string;
+    completed: boolean;
+}
+
 interface Task {
     name: string;
     description?: string;
     id: number;
     pivot?: {
+        id: number;
         completed: boolean;
         description?: string;
+        subtasks?: Subtask[];
     };
 }
 

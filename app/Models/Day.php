@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Day extends Model
 {
@@ -19,17 +20,26 @@ class Day extends Model
         'date' => 'datetime',
     ];
 
-    public function tasks(): BelongsToMany
+    public function dayTasks(): HasMany
     {
-        return $this->BelongsToMany(Task::class)->withPivot(['completed', 'description']);
+        return $this->hasMany(DayTask::class)->with('subtasks');
     }
 
     /**
-     * Only return the tasks where the pivot table's completed column is true.
+     * Get tasks through dayTasks relationship for backward compatibility.
+     * This simulates the old belongsToMany relationship.
+     */
+    public function tasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'day_task')->withPivot(['id', 'completed', 'description']);
+    }
+
+    /**
+     * Only return the tasks where the DayTask's completed column is false.
      */
     public function incompleteTasks(): BelongsToMany
     {
-        return $this->BelongsToMany(Task::class)->wherePivot('completed', false);
+        return $this->belongsToMany(Task::class, 'day_task')->wherePivot('completed', false);
     }
 
     public static function getCurrentDay(): Day
@@ -44,12 +54,12 @@ class Day extends Model
 
         if ($day->incompleteTasks()->exists()) {
             // If the last day has unfinished tasks, return it
-            return $day->load('tasks');
+            return $day->load(['tasks', 'dayTasks.subtasks']);
         }
 
         // If all tasks are completed, create a new day
         return static::create([
             'date' => now(),
-        ]);
+        ])->load(['tasks', 'dayTasks.subtasks']);
     }
 }

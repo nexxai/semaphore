@@ -14,9 +14,13 @@ Route::get('/', function () {
         Auth::login($user);
     }
 
+    $currentDay = Day::getCurrentDay();
+    $dayTasks = $currentDay->dayTasks()->with('task', 'subtasks')->get();
+
     return Inertia::render('welcome', [
-        'tasks' => fn () => Task::all()->diff(Day::getCurrentDay()->tasks),
-        'current_day' => fn () => Day::getCurrentDay(),
+        'tasks' => Task::all()->diff($currentDay->tasks),
+        'current_day' => $currentDay,
+        'dayTasks' => $dayTasks,
     ]);
 })->name('home');
 
@@ -38,6 +42,18 @@ Route::name('tasks.')->prefix('tasks')->group(function () {
 
     Route::post('/notcomplete', [TaskController::class, 'notcomplete'])
         ->name('notcomplete');
+
+    Route::post('/subtasks/add', [TaskController::class, 'addSubtask'])
+        ->name('subtasks.add');
+
+    Route::post('/subtasks/complete', [TaskController::class, 'completeSubtask'])
+        ->name('subtasks.complete');
+
+    Route::post('/subtasks/notcomplete', [TaskController::class, 'notcompleteSubtask'])
+        ->name('subtasks.notcomplete');
+
+    Route::post('/subtasks/remove', [TaskController::class, 'removeSubtask'])
+        ->name('subtasks.remove');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

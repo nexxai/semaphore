@@ -44,8 +44,9 @@ class TaskUpdated implements ShouldBroadcast
         return [
             'day' => [
                 'id' => $this->day->id,
-                'name' => $this->day->name,
+                'date' => $this->day->date,
                 'tasks' => $this->day->tasks,
+                'dayTasks' => $this->day->dayTasks->load('task', 'subtasks'),
             ],
             'updated_by' => $this->user->id,
         ];
