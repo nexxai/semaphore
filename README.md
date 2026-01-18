@@ -6,11 +6,34 @@ A streamlined task management app designed for families with centralized coordin
 
 Semaphore recognizes that many families operate most efficiently with a designated coordinator who has visibility into the full scope of household needs, schedules, and priorities. This person can create and assign tasks, and track progress, while other family members receive clear, actionable assignments without needing to manage the broader organizational overhead.
 
+### Task Management with Subtasks
+
+Semaphore supports hierarchical task organization through subtasks. Each task can have multiple subtasks that must be completed before the main task can be marked as done. This ensures that complex tasks are properly broken down into manageable steps.
+
+For example:
+
+- **Main Task**: "Clean the kitchen"
+    - **Subtask**: "Empty dishwasher"
+    - **Subtask**: "Wipe counters"
+    - **Subtask**: "Sweep floor"
+    - **Subtask**: "Take out trash"
+
+The main task cannot be completed until all subtasks are finished, providing clear progress tracking and preventing incomplete work.
+
 Whether you're coordinating chores, managing family schedules, planning events, or organizing household projects, Semaphore provides a clear communication channel that reduces decision fatigue and eliminates the back-and-forth of "what should I do next?"
+
+## Features
+
+- **Task Management**: Create and organize tasks for daily household coordination
+- **Subtasks**: Break down complex tasks into manageable steps with completion tracking
+- **Smart Completion Logic**: Tasks can only be completed when all subtasks are finished
+- **Real-time Updates**: Live UI updates via WebSocket connections
+- **Email Notifications**: Automated notifications for task progress and milestones
+- **Family Coordination**: Designed for streamlined communication between family members
 
 ## Requirements
 
-- PHP 8.2 or higher
+- PHP 8.4 or higher
 - Composer
 - Node.js & npm
 - Database (SQLite by default, or MySQL/PostgreSQL)
@@ -52,6 +75,8 @@ Edit the `.env` file to configure your database and other settings, ensuring you
 php artisan migrate
 ```
 
+This will create the necessary database tables for tasks, days, and subtasks.
+
 ### 6. Build frontend assets
 
 ```bash
@@ -79,7 +104,7 @@ The application will be available at `http://localhost:8000`.
 If you plan to host Semaphore outside of a walled garden network (such as a private home network), you should implement additional security measures to protect your application and data. Some options include:
 
 - Using [Cloudflare Access](https://www.cloudflare.com/products/zero-trust/access/) to add authentication in front of your application
-- Setting up a VPN for secure remote access
+- Setting up a VPN or Tailscale for secure remote access
 - Implementing HTTP Basic Authentication at the web server level
 - Using a reverse proxy with authentication capabilities
 
