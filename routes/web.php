@@ -10,7 +10,12 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     if (! Auth::check()) {
-        $user = User::factory()->create();
+        $user = User::updateOrCreate([
+            'email' => 'semaphore@example.org',
+        ], [
+            'name' => 'Semaphore',
+            'password' => bcrypt('password'),
+        ]);
         Auth::login($user);
     }
 
